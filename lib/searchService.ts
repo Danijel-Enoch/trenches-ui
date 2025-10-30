@@ -210,7 +210,7 @@ export class SearchService {
 
 			return (
 				data.pairs
-					?.filter((pair) => pair.chainId === "base") // Only Base chain results
+					?.filter((pair) => pair.chainId === "ethereum") // Only ethereum chain results
 					?.filter((pair) => this.isSupportedDex(pair.dexId)) // Only supported DEXes
 					?.map((pair) => ({
 						id: pair.pairAddress,
@@ -242,7 +242,7 @@ export class SearchService {
 	 */
 	private async searchByTokenAddress(
 		address: string,
-		chainId: string = "base"
+		chainId: string = "ethereum"
 	): Promise<SearchResult[]> {
 		try {
 			const response = await fetch(
@@ -297,7 +297,7 @@ export class SearchService {
 	 */
 	private async searchGeckoTerminal(
 		query: string,
-		network: string = "base"
+		network: string = "ethereum"
 	): Promise<SearchResult[]> {
 		try {
 			const response = await fetch(
@@ -373,7 +373,7 @@ export class SearchService {
 	}
 
 	/**
-	 * Check if a DEX is supported on Base chain
+	 * Check if a DEX is supported on ethereum chain
 	 */
 	private isSupportedDex(dexId: string): boolean {
 		const normalizedDexId = dexId.toLowerCase().replace(/[-_\s]/g, "_");
@@ -391,11 +391,11 @@ export class SearchService {
 
 	/**
 	 * Main search function that combines results from multiple sources
-	 * All results are filtered to Base chain and supported DEXes only
+	 * All results are filtered to ethereum chain and supported DEXes only
 	 */
 	async search(
 		query: string,
-		chains: string[] = ["base"]
+		chains: string[] = ["ethereum"]
 	): Promise<SearchResult[]> {
 		if (!query || query.trim().length < 2) {
 			return [];
@@ -416,14 +416,14 @@ export class SearchService {
 			}
 
 			// Always do general search with DexScreener (handles symbols and general text)
-			// Results are filtered to Base chain only in searchDexScreener method
+			// Results are filtered to ethereum chain only in searchDexScreener method
 			const dexScreenerResults = await this.searchDexScreener(
 				trimmedQuery
 			);
 			allResults.push(...dexScreenerResults);
 
-			// Search with GeckoTerminal on Base network
-			const geckoTerminalPromises = ["base"].map((network) =>
+			// Search with GeckoTerminal on ethereum network
+			const geckoTerminalPromises = ["ethereum"].map((network) =>
 				this.searchGeckoTerminal(trimmedQuery, network)
 			);
 
@@ -433,10 +433,10 @@ export class SearchService {
 			// Remove duplicates based on pair address and sort by liquidity
 			const uniqueResults = this.removeDuplicates(allResults);
 
-			// Filter to ensure all results are Base chain and supported DEXes only
+			// Filter to ensure all results are ethereum chain and supported DEXes only
 			const baseOnlyResults = uniqueResults.filter(
 				(result) =>
-					result.chain.toLowerCase() === "base" &&
+					result.chain.toLowerCase() === "ethereum" &&
 					this.isSupportedDex(result.dex)
 			);
 

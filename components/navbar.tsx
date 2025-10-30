@@ -27,6 +27,7 @@ export function Navbar() {
 		{ href: "/", label: "Markets" },
 		{ href: "/create", label: "Create Market" },
 		{ href: "/positions", label: "My Positions" },
+		{ href: "/subgraph", label: "Analytics" },
 		...(isAdmin ? [{ href: "/admin", label: "Admin" }] : [])
 	];
 
