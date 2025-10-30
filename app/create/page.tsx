@@ -10,14 +10,13 @@ import { useRouter } from "next/navigation";
 
 export default function CreateMarket() {
 	const [tokenAddress, setTokenAddress] = useState("");
-	const [initialPrice, setInitialPrice] = useState("");
 	const [isCreating, setIsCreating] = useState(false);
 	const { address } = useAccount();
 	const { writeContract } = useWriteContract();
 	const router = useRouter();
 
 	const handleCreate = async () => {
-		if (!tokenAddress || !initialPrice || !address) return;
+		if (!tokenAddress || !address) return;
 
 		setIsCreating(true);
 		try {
@@ -25,13 +24,12 @@ export default function CreateMarket() {
 				address: PredictionMarket as `0x${string}`,
 				abi: PredictionMarketAbi,
 				functionName: "createMarket",
-				args: [tokenAddress, parseEther(initialPrice)],
+				args: [tokenAddress, parseEther("0.1")],
 				value: parseEther("0.01") // Creation fee
 			});
 
 			// Reset form
 			setTokenAddress("");
-			setInitialPrice("");
 
 			// Show success message instead of redirect
 			alert(
@@ -152,9 +150,7 @@ export default function CreateMarket() {
 								whileHover={{ scale: 1.02 }}
 								whileTap={{ scale: 0.98 }}
 								onClick={handleCreate}
-								disabled={
-									!tokenAddress || !initialPrice || isCreating
-								}
+								disabled={!tokenAddress || isCreating}
 								className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 							>
 								{isCreating
