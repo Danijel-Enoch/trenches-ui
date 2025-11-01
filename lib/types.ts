@@ -2,6 +2,8 @@ export interface Market {
 	id: bigint;
 	creator: string;
 	tokenAddress: string;
+	tokenSymbol?: string;
+	tokenName?: string;
 	initialPrice: bigint;
 	createdAt: bigint;
 	settlementTime: bigint;
@@ -17,13 +19,19 @@ export interface OutcomeStats {
 
 export interface UserPosition {
 	marketId: bigint;
-	upShares: bigint;
-	downShares: bigint;
+	pumpShares: bigint;
+	dumpShares: bigint;
+	noChangeShares: bigint;
+	rugShares: bigint;
+	moonShares: bigint;
 }
 
 export enum Outcome {
-	UP = 0,
-	DOWN = 1
+	PUMP = 0, // 10-50% increase
+	DUMP = 1, // 10-50% decrease
+	NO_CHANGE = 2, // within ±10%
+	RUG = 3, // >50% decrease
+	MOON = 4 // >50% increase
 }
 
 export interface TokenDetails {

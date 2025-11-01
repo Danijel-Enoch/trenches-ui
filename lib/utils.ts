@@ -57,3 +57,62 @@ export function formatPriceForContract(priceUsd: string): string {
 export function isValidAddress(address: string): boolean {
 	return /^0x[a-fA-F0-9]{40}$/.test(address);
 }
+
+/**
+ * Get token information by address
+ */
+export async function getTokenInfo(
+	address: string
+): Promise<{ symbol: string; name: string } | null> {
+	try {
+		const response = await fetch(
+			`https://api.dexscreener.com/latest/dex/tokens/ethereum/${address}`
+		);
+
+		if (!response.ok) {
+			return null;
+		}
+
+		const data = await response.json();
+
+		if (data && data.length > 0) {
+			const pair = data[0];
+			return {
+				symbol: pair.baseToken.symbol || "UNKNOWN",
+				name: pair.baseToken.name || "Unknown Token"
+			};
+		}
+
+		return null;
+	} catch (error) {
+		console.error("Error fetching token info:", error);
+		return null;
+	}
+}
+
+/**
+ * Format settlement time to readable string
+ */
+export function formatSettlementTime(settlementTime: bigint): string {
+	const date = new Date(Number(settlementTime) * 1000);
+	const now = new Date();
+
+	// Check if it's today and show "12 midnight today" or tomorrow
+	const today = new Date(
+		now.getFullYear(),
+		now.getMonth(),
+		now.getDate(),
+		0,
+		0,
+		0
+	);
+	const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+
+	if (date.getTime() === today.getTime()) {
+		return "12 midnight today";
+	} else if (date.getTime() === tomorrow.getTime()) {
+		return "12 midnight tomorrow";
+	} else {
+		return `12 midnight on ${date.toLocaleDateString()}`;
+	}
+}
